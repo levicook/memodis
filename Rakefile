@@ -6,11 +6,26 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "memodis"
     gem.summary = %Q{redis backed memoization helpers}
-    gem.description = %Q{semi-transparent memoization; backed by redis; redis-rb and redis-namespace}
+    gem.description = %Q{
+semi-transparent memoization; backed by redis; redis-rb and redis-namespace
+
+Background
+-----------
+1) http://blog.grayproductions.net/articles/caching_and_memoization
+2) http://code.google.com/p/redis & http://github.com/ezmobius/redis-rb
+
+Important Moving Parts
+----------------------
+1) http://code.google.com/p/redis/wiki/GetCommand
+2) http://code.google.com/p/redis/wiki/SetCommand
+3) http://code.google.com/p/redis/wiki/SetnxCommand
+4) http://github.com/defunkt/redis-namespace
+}
     gem.email = "levicook@gmail.com"
     gem.homepage = "http://github.com/levicook/memodis"
     gem.authors = ["levicook@gmail.com"]
     gem.add_development_dependency "riot", ">= 0"
+    gem.add_development_dependency "reek", ">= 0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new

@@ -1,11 +1,13 @@
 require 'teststrap'
 
-context "memodis" do
-  setup do
-    false
-  end
-
-  asserts "i'm a failure :(" do
-    topic
-  end
+context Memodis do
+  setup { Memodis }
+  asserts(:constants).includes('Memoizable')
+  asserts(:constants).includes('WeakCache')
 end
+
+context "Exteding Memodis" do
+  setup { Object.new.extend(Memodis) }
+  asserts(:methods).includes('memoize')
+end
+
