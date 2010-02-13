@@ -10,4 +10,3 @@ context "Exteding Memodis" do
   setup { Object.new.extend(Memodis) }
   asserts(:methods).includes('memoize')
 end
-
