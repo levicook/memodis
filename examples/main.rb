@@ -1,6 +1,7 @@
 require 'pathname'
 load Pathname.new(__FILE__).parent.parent + 'lib/memodis.rb'
 
+require 'rubygems'
 require 'hitimes'
 
 def fib( num )
