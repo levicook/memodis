@@ -1,6 +1,8 @@
 require 'pathname'
 load Pathname.new(__FILE__).parent+'dependencies.rb'
 
+require 'dist_redis'
+
 module Memodis
 
   # slurp cool vendor goodies into our namespace. would declare them 
@@ -12,7 +14,5 @@ module Memodis
   class_eval((VENDOR_PATH+'weak_cache.rb').read) unless defined? Memodis::WeakCache
 
   include Memodis::Memoizable
-
-
 
 end
