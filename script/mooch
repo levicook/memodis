@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+require "pathname"
+
+
+LOADER = '''
+require "pathname"
+ 
+vendor_path = Pathname.new(__FILE__).parent.parent + "vendor"
+ 
+Pathname.glob("#{vendor_path.realpath}/**/**/lib") do |lib|
+  next if $LOAD_PATH.include?(lib)
+  $LOAD_PATH.insert(0, lib) if lib.directory?
+end
+'''
+
+
+if ARGV[0] == "init"
+  lib = Pathname.new(ARGV[1])
+  lib.mkpath
+  (lib + 'dependencies.rb').open("w") do |file|
+    file.write LOADER
+  end
+else
+  vendor = Pathname.new("vendor")
+  vendor.mkpath
+
+  if File.exist?('.git')
+    system("git add vendor")
+    system("git submodule add git://github.com/#{ARGV[0]}.git vendor/#{ARGV[0]}")
+  else
+    Dir.chdir(vendor.realpath)
+    system("git clone git://github.com/#{ARGV[0]}.git #{ARGV[0]}")
+    if ARGV[1]
+      Dir.chdir(ARGV[0])
+      system("git checkout #{ARGV[1]}")
+    end
+  end
+
+end

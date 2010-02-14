@@ -1,7 +1,7 @@
 require 'pathname'
-require 'hitimes'
-
 load Pathname.new(__FILE__).parent.parent + 'lib/memodis.rb'
+
+require 'hitimes'
 
 def fib( num )
   return num if num < 2
@@ -17,3 +17,14 @@ memoize :fib
 
 print ' After memoize: '
 puts Hitimes::Interval.measure { fib(33) }
+
+
+# Memodis::SimpleCluster.new(
+#   :master => DistRedis.new(),
+#   :slaves =>,
+# )
+
+# memoize :fib, Memodis::RedisCache.new(
+#   :namespace => :fib,
+#   :cluster => 
+# )

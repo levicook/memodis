@@ -1,5 +1,5 @@
 require 'pathname'
-
+load Pathname.new(__FILE__).parent+'dependencies.rb'
 
 module Memodis
 
@@ -12,5 +12,7 @@ module Memodis
   class_eval((VENDOR_PATH+'weak_cache.rb').read) unless defined? Memodis::WeakCache
 
   include Memodis::Memoizable
+
+
 
 end
