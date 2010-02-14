@@ -22,3 +22,4 @@ pkg
 test/config
 test/log
 test/pid
+test/dump.rdb
