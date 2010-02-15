@@ -10,13 +10,13 @@ def fib(num)
 end
 
 puts 'Before memoize: '
-puts Hitimes::Interval.measure { print fib(30); print ': ' }
+puts Hitimes::Interval.measure { print fib(33); print ': ' }
 
 
 extend Memodis
 
 memoize :fib, Memodis::DistCache.new({
-  :key_gen => lambda { |k| "Kernel#fib(#{k})" },
+  :key_gen => lambda { |k| "fib(#{k})" },
   :decoder => :integer,
   :expires => (10 * 60),
   :master  => '127.0.0.1:16379 127.0.0.1:16380'.split,
@@ -26,6 +26,6 @@ memoize :fib, Memodis::DistCache.new({
 })
 
 puts "\nAfter memoize: "
-puts Hitimes::Interval.measure { print fib(30); print ': ' }
-puts Hitimes::Interval.measure { print fib(30); print ': ' }
-puts Hitimes::Interval.measure { print fib(30); print ': ' }
+puts Hitimes::Interval.measure { print fib(33); print ': ' }
+puts Hitimes::Interval.measure { print fib(33); print ': ' }
+puts Hitimes::Interval.measure { print fib(33); print ': ' }
