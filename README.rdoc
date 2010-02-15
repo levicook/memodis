@@ -1,6 +1,48 @@
 = memodis
 
-Description goes here.
+semi-transparent memoization; backed by redis;
+
+writes are sent to the master, reads are sent to an approriate slave.
+
+Two features:
+1. Memodis#memoize
+1. Memodis::DistCache
+
+== Example
+
+  def fib(num)
+    return num if num < 2
+    fib(num - 1) + fib(num - 2)
+  end
+
+  puts "Before memoize: "
+  puts fib(33) => 3524578 # after ~ 7 seconds
+
+  extend Memodis
+  memoize :fib, Memodis::DistCache.new({
+    :key_gen => lambda { |k| "fib(#{k})" },
+    :decoder => :integer,
+    :expires => (10 * 60),
+    :master  => '127.0.0.1:16379 127.0.0.1:16380'.split,
+    :slaves  => '127.0.0.1:16389 127.0.0.1:16390 
+                 127.0.0.1:16391 127.0.0.1:16392
+                 127.0.0.1:16393 127.0.0.1:16394'.split
+  })
+
+  puts "After memoize: "
+  puts fib(33) => 3524578 # after ~ 0.03   seconds
+  puts fib(33) => 3524578 # after ~ 0.0001 seconds
+  puts fib(33) => 3524578 # after ~ 0.0001 seconds
+
+
+== Background
+1. http://blog.grayproductions.net/articles/caching_and_memoization
+1. http://code.google.com/p/redis & http://github.com/ezmobius/redis-rb
+
+== Important Moving Parts
+1. http://code.google.com/p/redis/wiki/GetCommand
+1. http://code.google.com/p/redis/wiki/SetCommand
+1. http://code.google.com/p/redis/wiki/SetnxCommand
 
 == Note on Patches/Pull Requests
  

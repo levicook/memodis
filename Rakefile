@@ -6,21 +6,7 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "memodis"
     gem.summary = %Q{redis backed memoization helpers}
-    gem.description = %Q{
-semi-transparent memoization; backed by redis; redis-rb and redis-namespace
-
-Background
------------
-1) http://blog.grayproductions.net/articles/caching_and_memoization
-2) http://code.google.com/p/redis & http://github.com/ezmobius/redis-rb
-
-Important Moving Parts
-----------------------
-1) http://code.google.com/p/redis/wiki/GetCommand
-2) http://code.google.com/p/redis/wiki/SetCommand
-3) http://code.google.com/p/redis/wiki/SetnxCommand
-4) http://github.com/defunkt/redis-namespace
-}
+    gem.description = %Q{ semi-transparent memoization; backed by redis; }
     gem.email = "levicook@gmail.com"
     gem.homepage = "http://github.com/levicook/memodis"
     gem.authors = ["levicook@gmail.com"]
@@ -86,7 +72,6 @@ task :default => :test
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
-
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title = "memodis #{version}"
   rdoc.rdoc_files.include('README*')

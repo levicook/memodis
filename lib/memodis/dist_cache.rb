@@ -9,13 +9,11 @@ module Memodis
     CODERS.freeze
 
     def initialize(options)
-
       @master = DistRedis.new({
         :db => options[:db],
         :hosts => options[:master],
         :timeout => options[:timeout],
       })
-
       @slaves = options[:slaves].map do |h|
         host, port = h.split(':')
         Redis.new({
@@ -25,30 +23,20 @@ module Memodis
           :timeout => options[:timeout],
         })
       end
-
-      @encoder = case options[:encoder] 
-                 when Proc; options[:encoder]
-                 else; CODERS[options[:encoder]]
-                 end
-
-      @decoder = case options[:decoder] 
-                 when Proc; options[:decoder]
-                 else; CODERS[options[:decoder]]
-                 end
-
+      @encoder = resolve_coder(options[:encoder])
+      @decoder = resolve_coder(options[:decoder])
       @key_gen = options.fetch(:key_gen, lambda { |k| k })
-
       @expires = options[:expires]
     end
 
     def []= key, val
-      key = @key_gen.call(key)
+      key = canonicalize(key)
       @master.set(key, encode(val))
       @master.expire(key, @expires) unless @expires.nil?
     end
 
     def [] key
-      key = @key_gen.call(key)
+      key = canonicalize(key)
       if val = get(key)
         decode(val)
       else
@@ -57,6 +45,10 @@ module Memodis
     end
 
     private
+
+    def canonicalize(key)
+      @key_gen.call(key)
+    end
 
     def indexed_slaves
       @indexed_slaves ||= @slaves.inject(Hash.new) do |index, slave|
@@ -81,6 +73,15 @@ module Memodis
 
     def encode(val)
       @encoder.call(val)
+    end
+
+    def resolve_coder(coder_spec)
+      case coder_spec 
+      when Proc
+        coder_spec
+      else
+        CODERS[coder_spec]
+      end
     end
 
   end

@@ -25,7 +25,7 @@ memoize :fib, Memodis::DistCache.new({
                127.0.0.1:16393 127.0.0.1:16394'.split
 })
 
-puts "\nAfter memoize: "
+puts "After memoize: "
 puts Hitimes::Interval.measure { print fib(33); print ': ' }
 puts Hitimes::Interval.measure { print fib(33); print ': ' }
 puts Hitimes::Interval.measure { print fib(33); print ': ' }
