@@ -1,7 +1,8 @@
-require 'pathname'
-load Pathname.new(__FILE__).parent+'dependencies.rb'
+require 'rubygems'
 
+require 'pathname'
 require 'memodis/dist_cache'
+
 
 module Memodis
 

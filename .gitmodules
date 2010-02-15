@@ -1,3 +1,0 @@
-[submodule "vendor/levicook/redis-rb"]
-	path = vendor/levicook/redis-rb
-	url = git@github.com:levicook/redis-rb.git

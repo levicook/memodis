@@ -10,6 +10,7 @@ begin
     gem.email = "levicook@gmail.com"
     gem.homepage = "http://github.com/levicook/memodis"
     gem.authors = ["levicook@gmail.com"]
+    gem.add_dependency "redis", ">= 0.1.2"
     gem.add_development_dependency "riot", ">= 0"
     gem.add_development_dependency "reek", ">= 0"
     gem.add_development_dependency "daemon_controller", ">= 0"

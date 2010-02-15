@@ -1,5 +1,6 @@
-module Memodis
+require 'dist_redis'
 
+module Memodis
   class DistCache
 
     CODERS = {}
@@ -85,5 +86,4 @@ module Memodis
     end
 
   end
-
 end
