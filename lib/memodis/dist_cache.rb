@@ -10,6 +10,8 @@ module Memodis
 
     def initialize(options)
 
+      @key_gen = options.fetch(:key_gen, lambda { |k| k })
+
       @master = DistRedis.new({
         :db => options[:db],
         :hosts => options[:master],
@@ -38,10 +40,12 @@ module Memodis
     end
 
     def []= key, val
+      key = @key_gen.call(key)
       @master.set(key, encode(val))
     end
 
     def [] key
+      key = @key_gen.call(key)
       if val = get(key)
         decode(val)
       else
@@ -62,8 +66,10 @@ module Memodis
     end
 
     def get key
-      node = @master.node_for_key(String(key.first))
-      indexed_slaves[node.server].get(key)
+      m_node = @master.node_for_key(String(key.first))
+      s_node = indexed_slaves[m_node.server] || m_node
+      # TODO log warning if s_node == m_node
+      s_node.get(key)
     end
 
     def decode(val)

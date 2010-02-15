@@ -17,6 +17,7 @@ extend Memodis
 
 # TODO add namespace!!
 cache = Memodis::DistCache.new({
+  :key_gen => lambda { |k| "Kernel#fib(#{k})" },
   :decoder => :integer,
   :master  => '127.0.0.1:16379 127.0.0.1:16380'.split,
   :slaves  => '127.0.0.1:16389 127.0.0.1:16390 
