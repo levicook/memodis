@@ -16,7 +16,7 @@ module Memodis
         :timeout => options[:timeout],
       })
 
-      @slaves = options.fetch(:slaves, []).map do |h|
+      @slaves = options[:slaves].map do |h|
         host, port = h.split(':')
         Redis.new({
           :db => options[:db],
@@ -52,18 +52,13 @@ module Memodis
     private
 
     def indexed_slaves
-      @indexed_slaves ||= begin
-                            indexed_slaves = {}
-                            #indexed_slaves.default = @master
-                            @slaves.each do |slave|
-                              slave_info = slave.info
-                              master_host = slave_info[:master_host]
-                              master_port = slave_info[:master_port]
-                              key = "%s:%s" % [master_host, master_port]
-                              indexed_slaves[key] = slave
-                            end
-                            indexed_slaves
-                          end
+      @indexed_slaves ||= @slaves.inject(Hash.new) do |index, slave|
+        slave_info  = slave.info
+        master_host = slave_info[:master_host]
+        master_port = slave_info[:master_port]
+        index["#{master_host}:#{master_port}"] = slave
+        index
+      end
     end
 
     def get key
