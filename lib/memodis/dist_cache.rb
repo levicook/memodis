@@ -10,8 +10,6 @@ module Memodis
 
     def initialize(options)
 
-      @key_gen = options.fetch(:key_gen, lambda { |k| k })
-
       @master = DistRedis.new({
         :db => options[:db],
         :hosts => options[:master],
@@ -37,11 +35,16 @@ module Memodis
                  when Proc; options[:decoder]
                  else; CODERS[options[:decoder]]
                  end
+
+      @key_gen = options.fetch(:key_gen, lambda { |k| k })
+
+      @expires = options[:expires]
     end
 
     def []= key, val
       key = @key_gen.call(key)
       @master.set(key, encode(val))
+      @master.expire(key, @expires) unless @expires.nil?
     end
 
     def [] key
