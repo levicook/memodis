@@ -9,11 +9,13 @@ module Memodis
     CODERS.freeze
 
     def initialize(options)
+
       @master = DistRedis.new({
         :db => options[:db],
         :hosts => options[:master],
         :timeout => options[:timeout],
       })
+
       @slaves = options.fetch(:slaves, []).map do |h|
         host, port = h.split(':')
         Redis.new({
@@ -23,8 +25,16 @@ module Memodis
           :timeout => options[:timeout],
         })
       end
-      @encoder = options.fetch(:encoder, CODERS[options[:encoder]])
-      @decoder = options.fetch(:decoder, CODERS[options[:decoder]])
+
+      @encoder = case options[:encoder] 
+                 when Proc; options[:encoder]
+                 else; CODERS[options[:encoder]]
+                 end
+
+      @decoder = case options[:decoder] 
+                 when Proc; options[:decoder]
+                 else; CODERS[options[:decoder]]
+                 end
     end
 
     def []= key, val
@@ -41,9 +51,24 @@ module Memodis
 
     private
 
+    def indexed_slaves
+      @indexed_slaves ||= begin
+                            indexed_slaves = {}
+                            #indexed_slaves.default = @master
+                            @slaves.each do |slave|
+                              slave_info = slave.info
+                              master_host = slave_info[:master_host]
+                              master_port = slave_info[:master_port]
+                              key = "%s:%s" % [master_host, master_port]
+                              indexed_slaves[key] = slave
+                            end
+                            indexed_slaves
+                          end
+    end
+
     def get key
-      ## TODO read from slaves
-      @master.get(key)
+      node = @master.node_for_key(String(key.first))
+      indexed_slaves[node.server].get(key)
     end
 
     def decode(val)
